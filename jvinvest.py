@@ -4,7 +4,7 @@ import os
 
 # --- Page config ---
 st.set_page_config(
-    page_title="Hamburger Menu Example",
+    page_title="JV Invest",
     page_icon="🍔",
     layout="wide"
 )
