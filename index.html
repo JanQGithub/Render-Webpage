@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JV</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffffff; /* Ensure a white background */
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Center items vertically */
+            background-color: #004080;
+            color: #ffffff;
+            padding: 0 16px; /* Consistent padding on left and right */
+            height: calc(14.5vw);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0; /* Ensure the top bar is at the top */
+            left: 0;
+            width: 100%;
+            box-sizing: border-box;
+            z-index: 1000; /* High z-index to ensure it stays on top */
+        }
+
+        .logo {
+            display: flex;
+            align-items: center; /* Vertically center the logo */
+            height: 100%; /* Ensure the logo container fills the top bar */
+            max-height: 100%; /* Prevent overflow */
+            margin: 0; /* Remove extra margins */
+            z-index: 1001; /* Ensure the logo is above other elements */
+        }
+
+        .logo img {
+            height: calc(100% - 16px); /* Ensure the logo stays within the top bar, accounting for padding */
+            width: auto;
+            max-height: calc(100% - 16px); /* Prevent overflow */
+            transition: max-height 0.3s ease; /* Smooth scaling */
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2%;
+            align-items: center; /* Center navigation items vertically */
+            height: 100%; /* Ensure nav-links fill the top bar */
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center; /* Center text within each link */
+            color: #ffffff;
+            text-decoration: none;
+            font-size: calc(1rem + 0.5vw);
+            font-weight: 500;
+            padding: calc(8px + 0.5vw) calc(16px + 0.5vw);
+            border-radius: 8px;
+            white-space: nowrap;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a:focus {
+            background-color: #ffcc00;
+            color: #004080;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .hamburger div {
+            background-color: #ffffff;
+            height: 3px;
+            width: 25px;
+            margin: 4px 0;
+        }
+
+        .nav-links-mobile {
+            display: none;
+            flex-direction: column;
+            background-color: transparent; /* Remove background color */
+            position: fixed; /* Fixed position to stay below the top bar */
+            top: calc(14.5vw); /* Position directly below the top bar */
+            width: 100%;
+            padding: 16px;
+            z-index: 999; /* Ensure it is below the top bar */
+            box-shadow: none; /* Remove shadow effect */
+        }
+
+        .nav-links-mobile a {
+            color: #004080; /* Use the same color as the top bar text */
+            text-decoration: none;
+            font-size: calc(1rem + 0.5vw);
+            font-weight: 500;
+            padding: 12px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .nav-links-mobile a:hover {
+            background-color: #ffcc00;
+            color: #004080;
+        }
+
+        .show {
+            display: flex !important;
+        }
+
+        .content {
+            margin-top: calc(14.5vw + 40px); /* Wide margin below the top bar */
+            padding: 16px;
+        }
+
+        .nav-links-mobile.show + .content {
+            margin-top: calc(14.5vw + 40px + 200px); /* Add margin when the hamburger menu is open */
+        }
+
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .top-bar {
+                height: calc(20vw);
+            }
+
+            .logo img {
+                height: calc(100% - 16px); /* Adjust for smaller screens */
+                max-height: calc(100% - 16px);
+            }
+
+            .nav-links-mobile {
+                top: calc(20vw); /* Adjust for smaller screens */
+            }
+
+            .content {
+                margin-top: calc(20vw + 40px); /* Adjust margin for smaller screens */
+            }
+
+            .nav-links-mobile.show + .content {
+                margin-top: calc(20vw + 40px + 200px); /* Adjust margin when the hamburger menu is open */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .top-bar {
+                height: calc(24vw);
+            }
+
+            .logo img {
+                height: calc(100% - 16px); /* Adjust for even smaller screens */
+                max-height: calc(100% - 16px);
+            }
+
+            .nav-links-mobile {
+                top: calc(24vw); /* Adjust for even smaller screens */
+            }
+
+            .content {
+                margin-top: calc(24vw + 40px); /* Adjust margin for even smaller screens */
+            }
+
+            .nav-links-mobile.show + .content {
+                margin-top: calc(24vw + 40px + 200px); /* Adjust margin when the hamburger menu is open */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="logo">
+            <img src="logo.jpeg" alt="Logo" />
+        </div>
+        <div class="nav-links">
+            <a href="#Education">Education</a>
+            <a href="#News">News</a>
+            <a href="#Links">Links</a>
+            <a href="#Contact">Contact</a>
+        </div>
+        <div class="hamburger" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+
+    <div class="nav-links-mobile" id="mobile-menu">
+        <a href="#Education">Education</a>
+        <a href="#News">News</a>
+        <a href="#Links">Links</a>
+        <a href="#Contact">Contact</a>
+    </div>
+
+    <div class="content">
+        
+        <p>Content will be shown soon!</p>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById("mobile-menu");
+            menu.classList.toggle("show");
+        }
+    </script>
+</body>
+</html>
