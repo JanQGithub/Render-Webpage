@@ -2,126 +2,161 @@ import streamlit as st
 import base64
 import os
 
-# --- Page config ---
-st.set_page_config(
-    page_title="JV",
-    layout="wide"
-)
+st.set_page_config(page_title="JV", layout="wide")
 
-# --- Encode the logo image in base64 ---
 logo_path = os.path.abspath("logo.jpeg")
 with open(logo_path, "rb") as image_file:
     logo_base64 = base64.b64encode(image_file.read()).decode("utf-8")
 
-# --- Top Bar ---
 st.markdown(f"""
     <style>
-        body {{
-            margin: 0;
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        }}
+        body {{ margin: 0; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; }}
         .top-bar {{
-            display: flex;
-            justify-content: center; /* Center align the links */
-            align-items: center;
-            background-color: #004080; /* Adjusted to match logo */
-            color: #ffffff;
-            padding: calc(2vw) calc(4vw); /* Dynamically adjust padding */
+            display: flex; justify-content: space-between; align-items: center; /* Space between logo and hamburger */
+            background-color: #004080; color: #ffffff;
+            padding: 0 clamp(16px, 4vw, 32px); /* Dynamically adjust padding */
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: fixed; /* Keep the top bar fixed */
-            height: calc(12vw); /* Dynamically adjust height */
-            width: 100%;
+            box-sizing: border-box; /* Ensure consistent sizing across browsers */
+            position: fixed; width: calc(100% - 2 * clamp(16px, 4vw, 32px)); /* Dynamically adjust width */
+            height: calc(14.5vw); margin: 0 auto; /* Center the blue bar with auto margins */
             z-index: 1000;
         }}
         .nav-links {{
-            display: flex;
-            gap: 2%; /* Adjust gap dynamically */
-            flex-wrap: nowrap; /* Prevent wrapping of links */
+            display: flex; gap: 2%; flex-wrap: nowrap;
+            position: absolute; /* Position the nav-links */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Adjust for centering */
         }}
-        .nav-links a {{
-            color: #ffffff;
-            text-decoration: none;
-            font-size: calc(1.2rem + 1vw); /* Dynamically increase font size */
-            font-weight: 500;
-            text-align: center;
-            padding: calc(8px + 0.5vw) calc(16px + 0.5vw); /* Dynamically adjust padding */
-            border-radius: 4px;
-            transition: background-color 0.3s ease, color 0.3s ease, font-size 0.3s ease;
-            white-space: nowrap; /* Prevent text wrapping */
+        .nav-links a, .nav-links-mobile a {{
+            color: #ffffff; text-decoration: none; font-size: calc(1rem + 0.5vw); font-weight: 500;
+            padding: calc(8px + 0.5vw) calc(16px + 0.5vw);
+            border-radius: 8px; /* Make corners slightly rounder */
+            white-space: nowrap;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }}
         .nav-links a:hover, .nav-links a:focus {{
-            background-color: #ffcc00; /* Highlight color */
-            color: #004080; /* Text color on highlight */
+            background-color: #ffcc00; color: #004080;
         }}
         .logo {{
-            position: absolute;
-            left: calc(2vw); /* Dynamically position logo */
-            height: calc(90%); /* Ensure the logo stays smaller than the blue area */
+            margin-left: clamp(16px, 4vw, 32px); /* Dynamically adjust margin from the left */
+            height: calc(90%); /* Maintain proportional height */
+            max-height: calc(14.5vw); /* Dynamically adjust height proportionally */
+            min-height: 50px; /* Maintain a minimum height */
         }}
         .logo img {{
-            height: 100%; /* Adjust logo size automatically */
-            max-height: calc(12vw); /* Ensure the logo stays within the blue area */
+            height: 100%; width: auto; /* Maintain aspect ratio */
             transition: height 0.3s ease;
         }}
         .hamburger {{
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            position: absolute;
-            right: calc(4vw); /* Move hamburger slightly more toward the middle */
-            top: 50%; /* Center vertically in the blue bar */
-            transform: translateY(-50%); /* Adjust for perfect centering */
+            display: none; flex-direction: column; cursor: pointer;
+            margin-right: clamp(16px, 4vw, 32px); /* Dynamically adjust margin from the right */
+            top: 50%; transform: translateY(-50%);
         }}
         .hamburger div {{
-            background-color: #ffffff;
-            height: 3px;
-            width: 25px;
-            margin: 4px 0;
-            transition: all 0.3s ease;
+            background-color: #ffffff; height: 3px; width: 25px; margin: 4px 0;
         }}
         .nav-links-mobile {{
-            display: none;
-            flex-direction: column;
-            background-color: #004080; /* Match top bar color */
-            position: absolute;
-            top: calc(12vw); /* Position below the top bar */
-            width: 100%;
-            padding: 16px;
-            z-index: 999;
-        }}
-        .nav-links-mobile a {{
-            color: #ffffff;
-            text-decoration: none;
-            font-size: calc(1rem + 0.5vw); /* Dynamically increase font size */
-            padding: 8px 16px;
-            border-radius: 4px;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            display: none; flex-direction: column; background-color: #004080; position: absolute;
+            top: calc(14.5vw); /* Adjust top to match new bar height */
+            width: 100%; padding: 16px; z-index: 999;
         }}
         .nav-links-mobile a:hover {{
-            background-color: #ffcc00; /* Highlight color */
-            color: #004080; /* Text color on highlight */
+            background-color: #ffcc00; color: #004080;
         }}
         .show {{
-            display: flex !important; /* Show mobile menu */
+            display: flex !important;
         }}
-        @media (max-width: 768px) {{
-            .nav-links {{
-                display: none; /* Hide links on mobile */
+        @media (max-width: 1024px) {{ /* Adjust for smaller screens */
+            .top-bar {{
+                padding: 0 clamp(16px, 4vw, 32px); /* Dynamically adjust padding */
+                width: calc(100% - 2 * clamp(16px, 4vw, 32px)); /* Dynamically adjust width */
+                height: calc(20vw); /* Adjust height */
+                box-sizing: border-box; /* Ensure consistent sizing */
+            }}
+            .nav-links {{ display: none; }}
+            .hamburger {{ display: flex; }} /* Ensure hamburger is visible */
+            .logo {{
+                margin-left: clamp(16px, 4vw, 32px); /* Dynamically adjust margin from the left */
+                height: calc(90%); /* Maintain proportional height */
+                max-height: calc(20vw); /* Dynamically adjust height proportionally */
+                min-height: 50px; /* Maintain a minimum height */
+            }}
+            .logo img {{
+                height: 100%; max-height: calc(80%); /* Ensure the logo stays within the blue area */
             }}
             .hamburger {{
-                display: flex; /* Show hamburger menu on mobile */
+                margin-right: clamp(16px, 4vw, 32px); /* Dynamically adjust margin from the right */
             }}
+            .nav-links-mobile {{
+                top: calc(20vw); /* Adjust top to match new bar height */
+            }}
+            .content {{
+                margin-top: calc(20vw + 20px); /* Adjust margin to match new bar height */
+            }}
+        }}
+        @media (max-width: 900px) {{ /* Adjust breakpoint to show hamburger sooner */
+            .top-bar {{
+                padding: calc(3vw) calc(6vw); /* Increase padding by 20% */
+                width: calc(100% - 2 * calc(3vw)); /* Dynamically adjust width */
+                height: calc(17.4vw); /* Increase height by 20% */
+            }}
+            .nav-links {{ display: none; }}
+            .hamburger {{ display: flex; }} /* Ensure hamburger is visible */
+            .logo {{
+                margin-left: calc(3vw); /* Dynamically adjust margin from the left */
+                height: calc(90%); /* Maintain proportional height */
+                max-height: calc(20vw); /* Dynamically adjust height proportionally */
+                min-height: 50px; /* Maintain a minimum height */
+            }}
+            .logo img {{
+                height: 100%; max-height: calc(96%); /* Ensure the logo stays within the blue area */
+            }}
+            .hamburger {{
+                margin-right: calc(3vw); /* Dynamically adjust margin from the right */
+            }}
+            .nav-links-mobile {{
+                top: calc(17.4vw); /* Adjust top to match new bar height */
+            }}
+            .content {{
+                margin-top: calc(17.4vw + 20px); /* Adjust margin to match new bar height */
+            }}
+        }}
+        @media (max-width: 768px) {{ /* Adjust styles for smaller screens */
+            .top-bar {{
+                padding: 0 clamp(16px, 4vw, 32px); /* Dynamically adjust padding */
+                width: calc(100% - 2 * clamp(16px, 4vw, 32px)); /* Dynamically adjust width */
+                height: calc(24vw); /* Adjust height */
+                box-sizing: border-box; /* Ensure consistent sizing */
+            }}
+            .logo {{
+                margin-left: clamp(16px, 4vw, 32px); /* Dynamically adjust margin from the left */
+                height: calc(90%); /* Maintain proportional height */
+                max-height: calc(24vw); /* Dynamically adjust height proportionally */
+                min-height: 50px; /* Maintain a minimum height */
+            }}
+            .logo img {{
+                height: 100%; max-height: calc(120%); /* Ensure the logo stays within the blue area */
+            }}
+            .hamburger {{
+                margin-right: clamp(16px, 4vw, 32px); /* Dynamically adjust margin from the right */
+            }}
+            .nav-links-mobile {{
+                top: calc(24vw); /* Adjust top to match new bar height */
+            }}
+            .content {{
+                margin-top: calc(24vw + 20px); /* Adjust margin to match new bar height */
+            }}
+        }}
+        .content {{
+            margin-top: calc(14.5vw + 20px); /* Adjust margin to match new bar height */
+            padding: 16px;
         }}
     </style>
 
     <div class="top-bar">
-        <div class="logo">
-            <img src="data:image/jpeg;base64,{logo_base64}">
-        </div>
+        <div class="logo"><img src="data:image/jpeg;base64,{logo_base64}"></div>
         <div class="hamburger" onclick="document.getElementById('mobile-menu').classList.toggle('show')">
-            <div></div>
-            <div></div>
-            <div></div>
+            <div></div><div></div><div></div>
         </div>
         <div class="nav-links">
             <a href="#Education">Education</a>
@@ -138,16 +173,10 @@ st.markdown(f"""
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {{
-            const hamburger = document.querySelector('.hamburger');
-            const mobileMenu = document.getElementById('mobile-menu');
-            hamburger.addEventListener('click', function() {{
-                mobileMenu.classList.toggle('show');
-            }});
+        document.querySelector('.hamburger').addEventListener('click', () => {{
+            document.getElementById('mobile-menu').classList.toggle('show');
         }});
     </script>
 """, unsafe_allow_html=True)
 
-# --- Content ---
-st.markdown("### Content will be shown soon!")
 st.write("")
